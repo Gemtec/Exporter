@@ -7,11 +7,16 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.encoding>UTF-8</project.encoding>
+		<project.source.version>1.6</project.source.version>
+		<project.target.version>1.6</project.target.version>
 		<vaadin.version>7.5.0</vaadin.version>
 		<vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
 	</properties>
 
 	<build>
+		<!-- Filename matching OSGI-Pattern -->
+		<finalName>${project.artifactId}-${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}.${mvngit.commit.committer.date}</finalName>
 		<sourceDirectory>${basedir}/src</sourceDirectory>
 		<plugins>
 			<plugin>
@@ -30,17 +35,84 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
+				<version>3.0</version>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-					<encoding>UTF-8</encoding>
+					<encoding>${project.encoding}</encoding>
+					<source>${project.source.version}</source>
+					<target>${project.target.version}</target>
+				</configuration>
+			</plugin>
+			<!-- Parses the artifact version for better name formatting. -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.10</version>
+				<executions>
+					<execution>
+						<id>parse-version</id>
+						<goals>
+							<goal>parse-version</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- Sets the mvngit.commit.committer.date and mvngit.commit.abbrev variable 
+				based on the last commit. -->
+			<plugin>
+				<groupId>com.github.koraktor</groupId>
+				<artifactId>mavanagaiata</artifactId>
+				<version>0.7.2</version>
+				<configuration>
+					<dirtyFlag>false</dirtyFlag>
+					<dateFormat>yyyyMMdd-HHmm</dateFormat>
+				</configuration>
+				<executions>
+					<execution>
+						<id>git-commit</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>commit</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- Adds the SHA-hashcode to the Manifest.MF -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifestEntries>
+							<Implementation-Version>${mvngit.commit.abbrev}</Implementation-Version>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+			<!--This plugin's configuration is used to store Eclipse m2e settings 
+				only. It has no influence on the Maven build itself. -->
+			<plugin>
+				<groupId>org.eclipse.m2e</groupId>
+				<artifactId>lifecycle-mapping</artifactId>
+				<version>1.0.0</version>
+				<configuration>
+					<lifecycleMappingMetadata>
+						<pluginExecutions>
+							<pluginExecution>
+								<pluginExecutionFilter>
+									<groupId>org.codehaus.mojo</groupId>
+									<artifactId>build-helper-maven-plugin</artifactId>
+									<versionRange>[1.10,)</versionRange>
+									<goals>
+										<goal>parse-version</goal>
+									</goals>
+								</pluginExecutionFilter>
+							</pluginExecution>
+						</pluginExecutions>
+					</lifecycleMappingMetadata>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
-
-
 	<dependencies>
 		<dependency>
 			<groupId>com.vaadin</groupId>
@@ -58,5 +130,4 @@
 			<version>5.3.4</version>
 		</dependency>
 	</dependencies>
-
 </project>
