@@ -5,21 +5,26 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.vaadin.haijian.IColumnValueConverter;
 
 import com.vaadin.data.Container;
 
 public class ExcelFileBuilder extends FileBuilder {
-    private static final String DATE_CELL_STYLE = "m/d/yy h:mm";
+
+	private static final long serialVersionUID = -8005096215388515449L;
+
     private Workbook workbook;
     private Sheet sheet;
     private int rowNr;
@@ -29,9 +34,32 @@ public class ExcelFileBuilder extends FileBuilder {
     private CellStyle dateCellStyle;
     private CellStyle boldStyle;
 
+	private Map<Object, IColumnValueConverter> converters;
+
+	private Object[] visibleColumns;
+
+	private Map<Object, String> formaters;
+
     public ExcelFileBuilder(Container container) {
         super(container);
     }
+
+	public ExcelFileBuilder(Container container,
+							Map<Object, IColumnValueConverter> converters) {
+		super(container);
+
+		if (visibleColumns == null)
+			visibleColumns = container.getContainerPropertyIds().toArray();
+
+		this.converters = converters;
+	}
+
+	public ExcelFileBuilder(Container container,
+							Map<Object, IColumnValueConverter> converters,
+							Map<Object, String> formaters) {
+		this(container, converters);
+		this.formaters = formaters;
+	}
 
     public void setDateCellStyle(String style) {
         CreationHelper createHelper = workbook.getCreationHelper();
@@ -65,11 +93,27 @@ public class ExcelFileBuilder extends FileBuilder {
     @Override
     protected void onNewCell() {
         cell = row.createCell(colNr);
+
+		String columnValueFormater = getCellFormaters().get(visibleColumns[colNr]);
+		if (columnValueFormater != null) {
+			DataFormat format = workbook.createDataFormat();
+			CellStyle style = workbook.createCellStyle();
+			short formatNumber = format.getFormat(columnValueFormater);
+			System.out.println("Für format " + columnValueFormater + " wurde id " + formatNumber + " zurückgegeben");
+			style.setDataFormat(formatNumber);
+			cell.setCellStyle(style);
+		}
+
         colNr++;
     }
 
     @Override
     protected void buildCell(Object value) {
+
+		IColumnValueConverter columnValueConverter = getCellValueConverters().get(visibleColumns[colNr - 1]);
+		if (columnValueConverter != null)
+			value = columnValueConverter.convert(value);
+
         if (value == null) {
             cell.setCellType(Cell.CELL_TYPE_BLANK);
         } else if (value instanceof Boolean) {
@@ -158,4 +202,18 @@ public class ExcelFileBuilder extends FileBuilder {
         dateCellStyle = null;
         boldStyle = null;
     }
+
+	protected Map<Object, IColumnValueConverter> getCellValueConverters() {
+		return converters;
+	}
+
+	protected Map<Object, String> getCellFormaters() {
+		return formaters;
+	}
+
+	@Override
+	public void setVisibleColumns(Object[] visibleColumns) {
+		super.setVisibleColumns(visibleColumns);
+		this.visibleColumns = visibleColumns;
+	}
 }

@@ -1,5 +1,8 @@
 package org.vaadin.haijian;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.vaadin.haijian.filegenerator.ExcelFileBuilder;
 import org.vaadin.haijian.filegenerator.FileBuilder;
 
@@ -7,6 +10,12 @@ import com.vaadin.data.Container;
 import com.vaadin.ui.Table;
 
 public class ExcelExporter extends Exporter {
+
+	private static final long serialVersionUID = -1981433789055280899L;
+
+	private Map<Object, IColumnValueConverter> converters = new HashMap<Object, IColumnValueConverter>();
+	private Map<Object, String> formater = new HashMap<Object, String>();
+
     public ExcelExporter() {
         super();
     }
@@ -25,7 +34,7 @@ public class ExcelExporter extends Exporter {
 
     @Override
     protected FileBuilder createFileBuilder(Container container) {
-        return new ExcelFileBuilder(container);
+        return new ExcelFileBuilder(container, converters, formater);
     }
 
     @Override
@@ -39,4 +48,12 @@ public class ExcelExporter extends Exporter {
     		return downloadFileName + ".xls";
     	}
     }
+
+	public void setColumnValueConverter(Object propertyId, IColumnValueConverter converter) {
+		converters.put(propertyId, converter);
+	}
+
+	public void setCellFormatter(Object propertyId, String format) {
+		formater.put(propertyId, format);
+	}
 }
