@@ -99,7 +99,6 @@ public class ExcelFileBuilder extends FileBuilder {
 			DataFormat format = workbook.createDataFormat();
 			CellStyle style = workbook.createCellStyle();
 			short formatNumber = format.getFormat(columnValueFormater);
-			System.out.println("Für format " + columnValueFormater + " wurde id " + formatNumber + " zurückgegeben");
 			style.setDataFormat(formatNumber);
 			cell.setCellStyle(style);
 		}
