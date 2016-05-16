@@ -36,6 +36,11 @@ public class ExcelExporter extends Exporter {
     protected FileBuilder createFileBuilder(Container container) {
         return new ExcelFileBuilder(container, converters, formater);
     }
+    
+    @Override
+    protected FileBuilder createFileBuilder(Table table) {
+        return new ExcelFileBuilder(table);
+    }
 
     @Override
     protected String getDownloadFileName() {

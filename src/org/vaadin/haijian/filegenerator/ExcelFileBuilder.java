@@ -20,6 +20,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.vaadin.haijian.IColumnValueConverter;
 
 import com.vaadin.data.Container;
+import com.vaadin.ui.Table;
 
 public class ExcelFileBuilder extends FileBuilder {
 
@@ -42,6 +43,10 @@ public class ExcelFileBuilder extends FileBuilder {
 
     public ExcelFileBuilder(Container container) {
         super(container);
+    }
+    
+    public ExcelFileBuilder(Table table) {
+        super(table);
     }
 
 	public ExcelFileBuilder(Container container,
@@ -107,36 +112,36 @@ public class ExcelFileBuilder extends FileBuilder {
     }
 
     @Override
-    protected void buildCell(Object value) {
+    protected void buildCell(Object modelValue, Object presentationValue) {
 
 		IColumnValueConverter columnValueConverter = getCellValueConverters().get(visibleColumns[colNr - 1]);
 		if (columnValueConverter != null)
-			value = columnValueConverter.convert(value);
+			modelValue = columnValueConverter.convert(modelValue);
 
-        if (value == null) {
+        if (modelValue == null) {
             cell.setCellType(Cell.CELL_TYPE_BLANK);
-        } else if (value instanceof Boolean) {
-            cell.setCellValue((Boolean) value);
+        } else if (modelValue instanceof Boolean) {
+            cell.setCellValue((Boolean) modelValue);
             cell.setCellType(Cell.CELL_TYPE_BOOLEAN);
-        } else if (value instanceof Date) {
-            cell.setCellValue(formatDate((Date) value));
+        } else if (modelValue instanceof Date) {
+            cell.setCellValue(formatDate((Date) modelValue));
             cell.setCellType(Cell.CELL_TYPE_STRING);
-        } else if (value instanceof Calendar) {
-        	Calendar calendar = (Calendar) value;
+        } else if (modelValue instanceof Calendar) {
+        	Calendar calendar = (Calendar) modelValue;
         	cell.setCellValue(calendar.getTime());
             cell.setCellType(Cell.CELL_TYPE_STRING);
-        } else if (value instanceof Double) {
-            cell.setCellValue((Double) value);
+        } else if (modelValue instanceof Double) {
+            cell.setCellValue((Double) modelValue);
             cell.setCellType(Cell.CELL_TYPE_NUMERIC);
         } else {
-            cell.setCellValue(value.toString());
+            cell.setCellValue(presentationValue.toString());
             cell.setCellType(Cell.CELL_TYPE_STRING);
         }
     }
 
     @Override
     protected void buildColumnHeaderCell(String header) {
-        buildCell(header);
+        buildCell(header, header);
         cell.setCellStyle(getBoldStyle());
     }
 
