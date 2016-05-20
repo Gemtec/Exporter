@@ -5,13 +5,13 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.pdf.PdfPCell;
 import com.vaadin.data.Container;
 import com.vaadin.ui.Table;
 
 public class CSVFileBuilder extends FileBuilder {
+
+	private static final long serialVersionUID = -2653242546382932373L;
+
     private FileWriter writer;
     private int rowNr;
     private int colNr;

@@ -8,7 +8,6 @@ import java.util.Locale;
 import org.vaadin.haijian.filegenerator.FileBuilder;
 
 import com.vaadin.data.Container;
-import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.StreamResource;
 import com.vaadin.server.StreamResource.StreamSource;
@@ -16,6 +15,9 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Table;
 
 public abstract class Exporter extends Button implements StreamSource {
+
+	private static final long serialVersionUID = 5803570823414976951L;
+
     protected FileBuilder fileBuilder;
     private FileDownloader fileDownloader;
     private Locale locale;

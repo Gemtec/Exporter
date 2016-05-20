@@ -19,6 +19,9 @@ import com.vaadin.data.Container;
 import com.vaadin.ui.Table;
 
 public class PdfFileBuilder extends FileBuilder {
+
+	private static final long serialVersionUID = -4638530112076578469L;
+
     private Document document;
     private PdfPTable table;
     private static Font catFont = new Font(Font.FontFamily.TIMES_ROMAN, 18,

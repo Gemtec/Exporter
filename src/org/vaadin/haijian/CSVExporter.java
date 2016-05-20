@@ -7,6 +7,9 @@ import com.vaadin.data.Container;
 import com.vaadin.ui.Table;
 
 public class CSVExporter extends Exporter {
+
+	private static final long serialVersionUID = 5366394162622258701L;
+
     public CSVExporter() {
         super();
     }

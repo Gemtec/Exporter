@@ -14,7 +14,7 @@ public class ExcelExporter extends Exporter {
 	private static final long serialVersionUID = -1981433789055280899L;
 
 	private Map<Object, IColumnValueConverter> converters = new HashMap<Object, IColumnValueConverter>();
-	private Map<Object, String> formater = new HashMap<Object, String>();
+	private Map<Object, String> formatter = new HashMap<Object, String>();
 
     public ExcelExporter() {
         super();
@@ -34,12 +34,12 @@ public class ExcelExporter extends Exporter {
 
     @Override
     protected FileBuilder createFileBuilder(Container container) {
-        return new ExcelFileBuilder(container, converters, formater);
+        return new ExcelFileBuilder(container, converters, formatter);
     }
     
     @Override
     protected FileBuilder createFileBuilder(Table table) {
-        return new ExcelFileBuilder(table);
+        return new ExcelFileBuilder(table, converters, formatter);
     }
 
     @Override
@@ -59,6 +59,6 @@ public class ExcelExporter extends Exporter {
 	}
 
 	public void setCellFormatter(Object propertyId, String format) {
-		formater.put(propertyId, format);
+		formatter.put(propertyId, format);
 	}
 }
