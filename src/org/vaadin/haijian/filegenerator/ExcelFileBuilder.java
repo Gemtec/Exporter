@@ -66,10 +66,26 @@ public class ExcelFileBuilder extends FileBuilder {
 		this.formaters = formaters;
 	}
 
+	public ExcelFileBuilder(Table table,
+							Map<Object, IColumnValueConverter> converters) {
+		super(table);
+
+		if (visibleColumns == null)
+			visibleColumns = table.getContainerPropertyIds().toArray();
+
+		this.converters = converters;
+	}
+
+	public ExcelFileBuilder(Table table,
+							Map<Object, IColumnValueConverter> converters,
+							Map<Object, String> formaters) {
+		this(table, converters);
+		this.formaters = formaters;
+	}
+
     public void setDateCellStyle(String style) {
         CreationHelper createHelper = workbook.getCreationHelper();
-        dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat(
-                style));
+        dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat(style));
     }
 
     @Override
@@ -99,7 +115,7 @@ public class ExcelFileBuilder extends FileBuilder {
     protected void onNewCell() {
         cell = row.createCell(colNr);
 
-		String columnValueFormater = getCellFormaters().get(visibleColumns[colNr]);
+		String columnValueFormater = getCellFormaters() == null ? null : getCellFormaters().get(visibleColumns[colNr]);
 		if (columnValueFormater != null) {
 			DataFormat format = workbook.createDataFormat();
 			CellStyle style = workbook.createCellStyle();
@@ -114,7 +130,7 @@ public class ExcelFileBuilder extends FileBuilder {
     @Override
     protected void buildCell(Object modelValue, Object presentationValue) {
 
-		IColumnValueConverter columnValueConverter = getCellValueConverters().get(visibleColumns[colNr - 1]);
+		IColumnValueConverter columnValueConverter = getCellValueConverters() == null ? null : getCellValueConverters().get(visibleColumns[colNr - 1]);
 		if (columnValueConverter != null)
 			modelValue = columnValueConverter.convert(modelValue);
 
@@ -149,8 +165,7 @@ public class ExcelFileBuilder extends FileBuilder {
         if (dateCellStyle == null) {
             CreationHelper createHelper = workbook.getCreationHelper();
             dateCellStyle = workbook.createCellStyle();
-            dateCellStyle.setDataFormat(createHelper.createDataFormat()
-                    .getFormat(getDateFormatString()));
+            dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat(getDateFormatString()));
         }
         return dateCellStyle;
     }
@@ -183,8 +198,7 @@ public class ExcelFileBuilder extends FileBuilder {
         headerStyle.setAlignment(CellStyle.ALIGN_CENTER);
         cell.setCellStyle(headerStyle);
 
-        sheet.addMergedRegion(new CellRangeAddress(0, 1, 0,
-                getNumberofColumns() - 1));
+        sheet.addMergedRegion(new CellRangeAddress(0, 1, 0, getNumberofColumns() - 1));
         onNewRow();
     }
 
