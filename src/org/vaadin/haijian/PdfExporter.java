@@ -3,12 +3,17 @@ package org.vaadin.haijian;
 import org.vaadin.haijian.filegenerator.FileBuilder;
 import org.vaadin.haijian.filegenerator.PdfFileBuilder;
 
+import com.itextpdf.text.Element;
 import com.vaadin.data.Container;
 import com.vaadin.ui.Table;
 
 public class PdfExporter extends Exporter {
 
 	private static final long serialVersionUID = 8187412021337366390L;
+
+	public static final int ALIGNMENT_LEFT = Element.ALIGN_LEFT;
+	public static final int ALIGNMENT_CENTER = Element.ALIGN_CENTER;
+	public static final int ALIGNMENT_RIGHT = Element.ALIGN_RIGHT;
 
     public PdfExporter() {
         super();
@@ -52,4 +57,11 @@ public class PdfExporter extends Exporter {
         ((PdfFileBuilder) fileBuilder).setWithBorder(withBorder);
     }
     
+	public void setHorizonzalAlignments(int[] alignments) {
+		((PdfFileBuilder) fileBuilder).setHorizonzalAlignments(alignments);
+	}
+
+	public void setRelativeWidths(float[] widths) {
+		((PdfFileBuilder) fileBuilder).setRelativeWidths(widths);
+	}
 }

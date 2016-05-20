@@ -24,10 +24,15 @@ public class PdfFileBuilder extends FileBuilder {
 
     private Document document;
     private PdfPTable table;
-    private static Font catFont = new Font(Font.FontFamily.TIMES_ROMAN, 18,
-            Font.BOLD);
-    private static Font subFont = new Font(Font.FontFamily.TIMES_ROMAN, 14,
-            Font.BOLD);
+	private static Font catFont = new Font(Font.FontFamily.HELVETICA, 16, Font.BOLD);
+	private static Font subFont = new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD);
+	private static Font cellFont = new Font(Font.FontFamily.HELVETICA, 10);
+
+	/** Stores relative width for columns as percentage */
+	private float[] relativeWidths;
+	/** Stores custom column alignments */
+	private int[] columnAlignemnts;
+
     private boolean withBorder;
 	private int colNr;
 
@@ -56,6 +61,7 @@ public class PdfFileBuilder extends FileBuilder {
     @Override
     protected void buildColumnHeaderCell(String header) {
         PdfPCell cell = new PdfPCell(new Phrase(header, subFont));
+		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         if (!withBorder) {
             cell.setBorder(Rectangle.NO_BORDER);
         }
@@ -64,17 +70,27 @@ public class PdfFileBuilder extends FileBuilder {
 
     @Override
     protected void buildCell(Object modelValue, Object presentationValue) {
+		int horizontalAlignment = 0;
+		/*
+		 * checks if an alignments for a specified column exists, defaults to left(0) if none was
+		 * found
+		 */
+		if (columnAlignemnts != null) {
+			horizontalAlignment = columnAlignemnts.length <= colNr - 1 ? 0 : columnAlignemnts[colNr - 1];
+		}
+
     	PdfPCell cell;
     	if(modelValue == null){
     		cell = new PdfPCell(new Phrase(""));
     	}else if(modelValue instanceof Calendar){
     		Calendar calendar = (Calendar) modelValue;
-    		cell = new PdfPCell(new Phrase(formatDate(calendar.getTime())));
-    	}else if(modelValue instanceof Date){
-    		cell = new PdfPCell(new Phrase(formatDate((Date) modelValue)));
-    	}else {
-    		cell = new PdfPCell(new Phrase(presentationValue.toString()));
-    	}
+			cell = new PdfPCell(new Phrase(formatDate(calendar.getTime()), cellFont));
+		} else if (modelValue instanceof Date) {
+			cell = new PdfPCell(new Phrase(formatDate((Date) modelValue), cellFont));
+		} else {
+			cell = new PdfPCell(new Phrase(presentationValue.toString(), cellFont));
+		}
+		cell.setHorizontalAlignment(horizontalAlignment);
         
         if (!withBorder) {
             cell.setBorder(Rectangle.NO_BORDER);
@@ -119,6 +135,14 @@ public class PdfFileBuilder extends FileBuilder {
     protected void resetContent() {
         document = new Document();
         table = new PdfPTable(getNumberofColumns());
+		table.setWidthPercentage(100);
+		if (relativeWidths != null) {
+			try {
+				table.setWidths(relativeWidths);
+			} catch (DocumentException e1) {
+				throw new RuntimeException(e1.getMessage());
+			}
+		}
         try {
             PdfWriter.getInstance(document, new FileOutputStream(file));
         } catch (FileNotFoundException e) {
@@ -129,6 +153,14 @@ public class PdfFileBuilder extends FileBuilder {
 		colNr = 0;
         document.open();
     }
+
+	public void setHorizonzalAlignments(int[] alignments) {
+		this.columnAlignemnts = alignments;
+	}
+
+	public void setRelativeWidths(float[] widths) {
+		this.relativeWidths = widths;
+	}
 
 	@Override
 	public void setVisibleColumns(Object[] visibleColumns) {
