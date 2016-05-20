@@ -29,6 +29,7 @@ public class PdfFileBuilder extends FileBuilder {
     private static Font subFont = new Font(Font.FontFamily.TIMES_ROMAN, 14,
             Font.BOLD);
     private boolean withBorder;
+	private int colNr;
 
     public PdfFileBuilder(Container container) {
         super(container);
@@ -96,6 +97,16 @@ public class PdfFileBuilder extends FileBuilder {
         }
     }
 
+	@Override
+	protected void onNewRow() {
+		colNr = 0;
+	}
+
+	@Override
+	protected void onNewCell() {
+		colNr++;
+	}
+
     public boolean isWithBorder() {
         return withBorder;
     }
@@ -115,6 +126,15 @@ public class PdfFileBuilder extends FileBuilder {
         } catch (DocumentException e) {
             e.printStackTrace();
         }
+		colNr = 0;
         document.open();
     }
+
+	@Override
+	public void setVisibleColumns(Object[] visibleColumns) {
+		super.setVisibleColumns(visibleColumns);
+	}
+
+	@Override
+	protected void buildFooter() {}
 }

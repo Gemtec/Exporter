@@ -86,9 +86,7 @@ public abstract class FileBuilder implements Serializable {
         buildFooter();
     }
 
-    protected void resetContent() {
-
-    }
+	protected abstract void resetContent();
 
     protected void buildColumnHeaders() {
         if (visibleColumns.length == 0) {
@@ -106,14 +104,9 @@ public abstract class FileBuilder implements Serializable {
         onNewRow();
     }
 
-    protected void buildColumnHeaderCell(String header) {
+	protected abstract void buildColumnHeaderCell(String header);
 
-    }
-
-    protected void buildHeader() {
-        // TODO Auto-generated method stub
-
-    }
+	protected abstract void buildHeader();
 
     private void buildRows() {
         if (container == null || container.getItemIds().isEmpty()) {
@@ -149,14 +142,9 @@ public abstract class FileBuilder implements Serializable {
         }
     }
 
-    protected void onNewRow() {
+	protected abstract void onNewRow();
 
-    }
-
-    protected void onNewCell() {
-
-    }
-
+	protected abstract void onNewCell();
     
     /**
      * Build the cell, with the provided value. If the implementation supports formatting specific 
@@ -168,10 +156,7 @@ public abstract class FileBuilder implements Serializable {
      */
     protected abstract void buildCell(Object modelValue, Object presentationValue);
 
-    protected void buildFooter() {
-        // TODO Auto-generated method stub
-
-    }
+	protected abstract void buildFooter();
 
     protected abstract String getFileExtension();
 

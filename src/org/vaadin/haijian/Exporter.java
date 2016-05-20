@@ -25,8 +25,7 @@ public abstract class Exporter extends Button implements StreamSource {
     protected String downloadFileName;
 
     public Exporter() {
-        fileDownloader = new FileDownloader(new StreamResource(this,
-                getDownloadFileName()));
+		fileDownloader = new FileDownloader(new StreamResource(this, getDownloadFileName()));
         fileDownloader.extend(this);
     }
 
@@ -86,6 +85,7 @@ public abstract class Exporter extends Button implements StreamSource {
         fileBuilder.setHeader(header);
     }
     
+	@Override
     public void setLocale(Locale locale){
     	this.locale = locale;
     }

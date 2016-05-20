@@ -102,4 +102,10 @@ public class CSVFileBuilder extends FileBuilder {
         }
     }
 
+	@Override
+	protected void buildHeader() {}
+
+	@Override
+	protected void buildFooter() {}
+
 }
