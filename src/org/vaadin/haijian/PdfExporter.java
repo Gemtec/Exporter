@@ -11,10 +11,6 @@ public class PdfExporter extends Exporter {
 
 	private static final long serialVersionUID = 8187412021337366390L;
 
-	public static final int ALIGNMENT_LEFT = Element.ALIGN_LEFT;
-	public static final int ALIGNMENT_CENTER = Element.ALIGN_CENTER;
-	public static final int ALIGNMENT_RIGHT = Element.ALIGN_RIGHT;
-
     public PdfExporter() {
         super();
     }
@@ -57,11 +53,33 @@ public class PdfExporter extends Exporter {
         ((PdfFileBuilder) fileBuilder).setWithBorder(withBorder);
     }
     
-	public void setHorizonzalAlignments(int[] alignments) {
-		((PdfFileBuilder) fileBuilder).setHorizonzalAlignments(alignments);
+	public void setHorizonzalAlignments(HorizontalAlignment[] alignments) {
+		int[] aligns = new int[alignments.length];
+		for (int i = 0; i < alignments.length; i++) {
+			aligns[i] = alignments[i].getAlignment();
+		}
+		((PdfFileBuilder) fileBuilder).setHorizonzalAlignments(aligns);
 	}
 
 	public void setRelativeWidths(float[] widths) {
 		((PdfFileBuilder) fileBuilder).setRelativeWidths(widths);
+	}
+
+	public enum HorizontalAlignment {
+
+		LEFT(Element.ALIGN_LEFT),
+		CENTER(Element.ALIGN_CENTER),
+		RIGHT(Element.ALIGN_RIGHT);
+
+		HorizontalAlignment(int alignment) {
+			this.alignment = alignment;
+		}
+
+		private int alignment;
+
+		public int getAlignment() {
+			return alignment;
+		}
+
 	}
 }
