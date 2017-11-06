@@ -62,14 +62,18 @@ public abstract class FileBuilder implements Serializable {
 
     public File getFile() {
         try {
-            initTempFile();
-            resetContent();
-            buildFileContent();
-            writeToFile();
+    		writeContainerContentToFile();
         } catch (Exception e) {
             e.printStackTrace();
         }
         return file;
+    }
+
+	protected void writeContainerContentToFile() throws IOException {
+        initTempFile();
+        resetContent();
+        buildFileContent();
+        writeToFile();
     }
 
     private void initTempFile() throws IOException {
@@ -118,7 +122,7 @@ public abstract class FileBuilder implements Serializable {
         }
     }
 
-    private void buildRow(Object itemId) {
+    protected void buildRow(Object itemId) {
         if (visibleColumns.length == 0) {
             return;
         }

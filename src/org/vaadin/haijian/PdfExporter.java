@@ -1,5 +1,7 @@
 package org.vaadin.haijian;
 
+import java.util.List;
+
 import org.vaadin.haijian.filegenerator.FileBuilder;
 import org.vaadin.haijian.filegenerator.PdfFileBuilder;
 
@@ -10,10 +12,16 @@ import com.vaadin.ui.Table;
 public class PdfExporter extends Exporter {
 
 	private static final long serialVersionUID = 8187412021337366390L;
+	private Iterable<List<Object>> datasouce;
 
     public PdfExporter() {
         super();
     }
+
+	public PdfExporter(Iterable<List<Object>> datasouce) {
+		super();
+		this.datasouce = datasouce;
+	}
 
     public PdfExporter(Table table) {
         super(table);
@@ -29,7 +37,7 @@ public class PdfExporter extends Exporter {
 
     @Override
     protected FileBuilder createFileBuilder(Container container) {
-        return new PdfFileBuilder(container);
+        return new PdfFileBuilder(container, datasouce);
     }
     
     @Override
@@ -63,6 +71,10 @@ public class PdfExporter extends Exporter {
 
 	public void setRelativeWidths(float[] widths) {
 		((PdfFileBuilder) fileBuilder).setRelativeWidths(widths);
+	}
+
+	public void setDataSource(Iterable<List<Object>> datasouce) {
+		((PdfFileBuilder) fileBuilder).setDataSorce(datasouce);
 	}
 
 	public enum HorizontalAlignment {

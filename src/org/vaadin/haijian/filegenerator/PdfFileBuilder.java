@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -36,6 +37,9 @@ public class PdfFileBuilder extends FileBuilder {
     private boolean withBorder;
 	private int colNr;
 
+
+	private Iterable<List<Object>> dataSupplier;
+
     public PdfFileBuilder(Container container) {
         super(container);
     }
@@ -44,6 +48,12 @@ public class PdfFileBuilder extends FileBuilder {
         super(table);
     }
     
+    public PdfFileBuilder(	Container  container,
+                          	Iterable<List<Object>> dataSupplier) {
+    	this(container);
+    	this.dataSupplier = dataSupplier;
+    }
+
     @Override
     protected void buildHeader() {
         if (getHeader() != null) {
@@ -105,12 +115,17 @@ public class PdfFileBuilder extends FileBuilder {
 
     @Override
     protected void writeToFile() {
-        try {
-            document.add(table);
-            document.close();
-        } catch (DocumentException e) {
-            e.printStackTrace();
-        }
+		if (dataSupplier != null){
+			createRowsFromDataSupplier(dataSupplier);
+			table.setComplete(true);
+		} else {
+			try {
+				document.add(table);
+			} catch (DocumentException e) {
+				e.printStackTrace();
+			}
+		}
+		document.close();
     }
 
 	@Override
@@ -135,6 +150,8 @@ public class PdfFileBuilder extends FileBuilder {
     protected void resetContent() {
         document = new Document();
         table = new PdfPTable(getNumberofColumns());
+        if (dataSupplier != null)
+        	table.setComplete(false);
 		table.setWidthPercentage(100);
 		if (relativeWidths != null) {
 			try {
@@ -168,5 +185,45 @@ public class PdfFileBuilder extends FileBuilder {
 	}
 
 	@Override
-	protected void buildFooter() {}
+	protected void buildFooter() {
+		if (dataSupplier != null)
+			try {
+				document.add(table);
+			} catch (DocumentException e) {
+				e.printStackTrace();
+			}
+	}
+
+	private void createRowsFromDataSupplier(Iterable<List<Object>> dataSupplier) {
+		for (List<Object> rowModels : dataSupplier) {
+			addRows(rowModels);
+		}
+	}
+
+	/**
+	 * @param modelObjects
+	 *            must have the same type as the container objects
+	 */
+	private void addRows(List<Object> modelObjects) {
+		for (Object itemId : modelObjects) {
+			addRowItem(itemId);
+		}
+
+		try {
+			document.add(table);
+		} catch (DocumentException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void addRowItem(Object itemId) {
+		container.removeAllItems();
+		container.addItem(itemId);
+		onNewRow();
+		buildRow(itemId);
+	}
+
+	public void setDataSorce(Iterable<List<Object>> datasouce) {
+		dataSupplier = datasouce;
+	}
 }
