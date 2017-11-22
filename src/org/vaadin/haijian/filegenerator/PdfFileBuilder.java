@@ -23,8 +23,8 @@ public class PdfFileBuilder extends FileBuilder {
 
 	private static final long serialVersionUID = -4638530112076578469L;
 
-    private Document document;
-    private PdfPTable table;
+	private Document document;
+	private PdfPTable table;
 	private static Font catFont = new Font(Font.FontFamily.HELVETICA, 16, Font.BOLD);
 	private static Font subFont = new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD);
 	private static Font cellFont = new Font(Font.FontFamily.HELVETICA, 10);
@@ -34,52 +34,51 @@ public class PdfFileBuilder extends FileBuilder {
 	/** Stores custom column alignments */
 	private int[] columnAlignemnts;
 
-    private boolean withBorder;
+	private boolean withBorder;
 	private int colNr;
-
 
 	private Iterable<List<Object>> dataSupplier;
 
-    public PdfFileBuilder(Container container) {
-        super(container);
-    }
+	public PdfFileBuilder(Container container) {
+		super(container);
+	}
 
-    public PdfFileBuilder(Table table) {
-        super(table);
-    }
-    
-    public PdfFileBuilder(	Container  container,
-                          	Iterable<List<Object>> dataSupplier) {
-    	this(container);
-    	this.dataSupplier = dataSupplier;
-    }
+	public PdfFileBuilder(Table table) {
+		super(table);
+	}
 
-    @Override
-    protected void buildHeader() {
-        if (getHeader() != null) {
-            Paragraph title = new Paragraph(getHeader(), catFont);
-            title.add(new Paragraph(" "));
-            title.setAlignment(Element.ALIGN_CENTER);
-            try {
-                document.add(title);
-            } catch (DocumentException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+	public PdfFileBuilder(	Container container,
+							Iterable<List<Object>> dataSupplier) {
+		this(container);
+		this.dataSupplier = dataSupplier;
+	}
 
-    @Override
-    protected void buildColumnHeaderCell(String header) {
-        PdfPCell cell = new PdfPCell(new Phrase(header, subFont));
+	@Override
+	protected void buildHeader() {
+		if (getHeader() != null) {
+			Paragraph title = new Paragraph(getHeader(), catFont);
+			title.add(new Paragraph(" "));
+			title.setAlignment(Element.ALIGN_CENTER);
+			try {
+				document.add(title);
+			} catch (DocumentException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	@Override
+	protected void buildColumnHeaderCell(String header) {
+		PdfPCell cell = new PdfPCell(new Phrase(header, subFont));
 		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        if (!withBorder) {
-            cell.setBorder(Rectangle.NO_BORDER);
-        }
-        table.addCell(cell);
-    }
+		if (!withBorder) {
+			cell.setBorder(Rectangle.NO_BORDER);
+		}
+		table.addCell(cell);
+	}
 
-    @Override
-    protected void buildCell(Object modelValue, Object presentationValue) {
+	@Override
+	protected void buildCell(Object modelValue, Object presentationValue) {
 		int horizontalAlignment = 0;
 		/*
 		 * checks if an alignments for a specified column exists, defaults to left(0) if none was
@@ -89,11 +88,11 @@ public class PdfFileBuilder extends FileBuilder {
 			horizontalAlignment = columnAlignemnts.length <= colNr - 1 ? 0 : columnAlignemnts[colNr - 1];
 		}
 
-    	PdfPCell cell;
-    	if(modelValue == null){
-    		cell = new PdfPCell(new Phrase(""));
-    	}else if(modelValue instanceof Calendar){
-    		Calendar calendar = (Calendar) modelValue;
+		PdfPCell cell;
+		if (modelValue == null) {
+			cell = new PdfPCell(new Phrase(""));
+		} else if (modelValue instanceof Calendar) {
+			Calendar calendar = (Calendar) modelValue;
 			cell = new PdfPCell(new Phrase(formatDate(calendar.getTime()), cellFont));
 		} else if (modelValue instanceof Date) {
 			cell = new PdfPCell(new Phrase(formatDate((Date) modelValue), cellFont));
@@ -101,21 +100,21 @@ public class PdfFileBuilder extends FileBuilder {
 			cell = new PdfPCell(new Phrase(presentationValue.toString(), cellFont));
 		}
 		cell.setHorizontalAlignment(horizontalAlignment);
-        
-        if (!withBorder) {
-            cell.setBorder(Rectangle.NO_BORDER);
-        }
-        table.addCell(cell);
-    }
 
-    @Override
-    protected String getFileExtension() {
-        return ".pdf";
-    }
+		if (!withBorder) {
+			cell.setBorder(Rectangle.NO_BORDER);
+		}
+		table.addCell(cell);
+	}
 
-    @Override
-    protected void writeToFile() {
-		if (dataSupplier != null){
+	@Override
+	protected String getFileExtension() {
+		return ".pdf";
+	}
+
+	@Override
+	protected void writeToFile() {
+		if (dataSupplier != null) {
 			createRowsFromDataSupplier(dataSupplier);
 			table.setComplete(true);
 		} else {
@@ -126,7 +125,7 @@ public class PdfFileBuilder extends FileBuilder {
 			}
 		}
 		document.close();
-    }
+	}
 
 	@Override
 	protected void onNewRow() {
@@ -138,20 +137,22 @@ public class PdfFileBuilder extends FileBuilder {
 		colNr++;
 	}
 
-    public boolean isWithBorder() {
-        return withBorder;
-    }
+	public boolean isWithBorder() {
+		return withBorder;
+	}
 
-    public void setWithBorder(boolean withBorder) {
-        this.withBorder = withBorder;
-    }
+	public void setWithBorder(boolean withBorder) {
+		this.withBorder = withBorder;
+	}
 
-    @Override
-    protected void resetContent() {
-        document = new Document();
-        table = new PdfPTable(getNumberofColumns());
-        if (dataSupplier != null)
-        	table.setComplete(false);
+	@Override
+	protected void resetContent() {
+		document = new Document();
+		table = new PdfPTable(getNumberofColumns());
+		if (dataSupplier != null) {
+			container.removeAllItems();
+			table.setComplete(false);
+		}
 		table.setWidthPercentage(100);
 		if (relativeWidths != null) {
 			try {
@@ -160,16 +161,16 @@ public class PdfFileBuilder extends FileBuilder {
 				throw new RuntimeException(e1.getMessage());
 			}
 		}
-        try {
-            PdfWriter.getInstance(document, new FileOutputStream(file));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (DocumentException e) {
-            e.printStackTrace();
-        }
+		try {
+			PdfWriter.getInstance(document, new FileOutputStream(file));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (DocumentException e) {
+			e.printStackTrace();
+		}
 		colNr = 0;
-        document.open();
-    }
+		document.open();
+	}
 
 	public void setHorizonzalAlignments(int[] alignments) {
 		this.columnAlignemnts = alignments;
