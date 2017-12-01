@@ -14,53 +14,53 @@ public class PdfExporter extends Exporter {
 	private static final long serialVersionUID = 8187412021337366390L;
 	private Iterable<List<Object>> datasouce;
 
-    public PdfExporter() {
-        super();
-    }
+	public PdfExporter() {
+		super();
+	}
 
 	public PdfExporter(Iterable<List<Object>> datasouce) {
 		super();
 		this.datasouce = datasouce;
 	}
 
-    public PdfExporter(Table table) {
-        super(table);
-    }
+	public PdfExporter(Table table) {
+		super(table);
+	}
 
     public PdfExporter(Container container, Object[] visibleColumns) {
-        super(container, visibleColumns);
-    }
+		super(container, visibleColumns);
+	}
 
-    public PdfExporter(Container container) {
-        super(container);
-    }
+	public PdfExporter(Container container) {
+		super(container);
+	}
 
-    @Override
-    protected FileBuilder createFileBuilder(Container container) {
-        return new PdfFileBuilder(container, datasouce);
-    }
-    
-    @Override
-    protected FileBuilder createFileBuilder(Table table) {
-        return new PdfFileBuilder(table);
-    }
+	@Override
+	protected FileBuilder createFileBuilder(Container container) {
+		return new PdfFileBuilder(container, datasouce);
+	}
 
-    @Override
-    protected String getDownloadFileName() {
-    	if(downloadFileName == null){
-    		return "exported-pdf.pdf";
-        }
-    	if(downloadFileName.endsWith(".pdf")){
-    		return downloadFileName;
-    	}else{
-    		return downloadFileName + ".pdf";
-    	}
-    }
+	@Override
+	protected FileBuilder createFileBuilder(Table table) {
+		return new PdfFileBuilder(table);
+	}
 
-    public void setWithBorder(boolean withBorder) {
-        ((PdfFileBuilder) fileBuilder).setWithBorder(withBorder);
-    }
-    
+	@Override
+	protected String getDownloadFileName() {
+		if (downloadFileName == null) {
+			return "exported-pdf.pdf";
+		}
+		if (downloadFileName.endsWith(".pdf")) {
+			return downloadFileName;
+		} else {
+			return downloadFileName + ".pdf";
+		}
+	}
+
+	public void setWithBorder(boolean withBorder) {
+		((PdfFileBuilder) fileBuilder).setWithBorder(withBorder);
+	}
+
 	public void setHorizonzalAlignments(HorizontalAlignment[] alignments) {
 		int[] aligns = new int[alignments.length];
 		for (int i = 0; i < alignments.length; i++) {
@@ -75,6 +75,14 @@ public class PdfExporter extends Exporter {
 
 	public void setDataSource(Iterable<List<Object>> datasouce) {
 		((PdfFileBuilder) fileBuilder).setDataSorce(datasouce);
+	}
+
+	public void setOrientationPortrait() {
+		((PdfFileBuilder) fileBuilder).setPortrait();
+	}
+
+	public void setOrientationLandscape() {
+		((PdfFileBuilder) fileBuilder).setLandscape();
 	}
 
 	public enum HorizontalAlignment {

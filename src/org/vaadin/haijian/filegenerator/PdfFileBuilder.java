@@ -10,6 +10,7 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
+import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
@@ -28,6 +29,8 @@ public class PdfFileBuilder extends FileBuilder {
 	private static Font catFont = new Font(Font.FontFamily.HELVETICA, 16, Font.BOLD);
 	private static Font subFont = new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD);
 	private static Font cellFont = new Font(Font.FontFamily.HELVETICA, 10);
+
+	private Rectangle orientation = PageSize.A4;
 
 	/** Stores relative width for columns as percentage */
 	private float[] relativeWidths;
@@ -148,6 +151,7 @@ public class PdfFileBuilder extends FileBuilder {
 	@Override
 	protected void resetContent() {
 		document = new Document();
+		document.setPageSize(orientation);
 		table = new PdfPTable(getNumberofColumns());
 		if (dataSupplier != null) {
 			container.removeAllItems();
@@ -170,6 +174,14 @@ public class PdfFileBuilder extends FileBuilder {
 		}
 		colNr = 0;
 		document.open();
+	}
+
+	public void setLandscape() {
+		orientation = PageSize.A4.rotate();
+	}
+
+	public void setPortrait() {
+		orientation = PageSize.A4;
 	}
 
 	public void setHorizonzalAlignments(int[] alignments) {
@@ -227,4 +239,5 @@ public class PdfFileBuilder extends FileBuilder {
 	public void setDataSorce(Iterable<List<Object>> datasouce) {
 		dataSupplier = datasouce;
 	}
+
 }
