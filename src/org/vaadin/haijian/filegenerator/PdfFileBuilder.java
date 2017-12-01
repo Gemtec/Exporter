@@ -176,10 +176,16 @@ public class PdfFileBuilder extends FileBuilder {
 		document.open();
 	}
 
+	/**
+	 * @since 0.3
+	 */
 	public void setLandscape() {
 		orientation = PageSize.A4.rotate();
 	}
 
+	/**
+	 * @since 0.3
+	 */
 	public void setPortrait() {
 		orientation = PageSize.A4;
 	}

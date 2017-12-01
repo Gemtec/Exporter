@@ -77,10 +77,16 @@ public class PdfExporter extends Exporter {
 		((PdfFileBuilder) fileBuilder).setDataSorce(datasouce);
 	}
 
+	/**
+	 * @since 0.3
+	 */
 	public void setOrientationPortrait() {
 		((PdfFileBuilder) fileBuilder).setPortrait();
 	}
 
+	/**
+	 * @since 0.3
+	 */
 	public void setOrientationLandscape() {
 		((PdfFileBuilder) fileBuilder).setLandscape();
 	}
