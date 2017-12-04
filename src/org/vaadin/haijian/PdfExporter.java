@@ -91,6 +91,17 @@ public class PdfExporter extends Exporter {
 		((PdfFileBuilder) fileBuilder).setLandscape();
 	}
 
+	/**
+	 * Specifies if the column headers should be displayed on every page.
+	 * 
+	 * @param columHeadersOnEveryPage
+	 *            If {@code true}, the headers of each column will be displayed on every page.
+	 * @since 0.3
+	 */
+	public void setColumnHeadersOnEveryPage(boolean columHeadersOnEveryPage) {
+		((PdfFileBuilder) fileBuilder).setColumnHeadersOnEveryPage(columHeadersOnEveryPage);
+	}
+
 	public enum HorizontalAlignment {
 
 		LEFT(Element.ALIGN_LEFT),

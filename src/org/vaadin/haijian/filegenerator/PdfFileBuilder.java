@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
@@ -71,9 +72,17 @@ public class PdfFileBuilder extends FileBuilder {
 	}
 
 	@Override
+	protected void buildColumnHeaders() {
+		super.buildColumnHeaders();
+		if (columnHeadersOnEveryPage) 
+			table.setHeaderRows(1);
+	}
+
+	@Override
 	protected void buildColumnHeaderCell(String header) {
 		PdfPCell cell = new PdfPCell(new Phrase(header, subFont));
 		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
 		if (!withBorder) {
 			cell.setBorder(Rectangle.NO_BORDER);
 		}
@@ -205,12 +214,8 @@ public class PdfFileBuilder extends FileBuilder {
 
 	@Override
 	protected void buildFooter() {
-		if (dataSupplier != null)
-			try {
-				document.add(table);
-			} catch (DocumentException e) {
-				e.printStackTrace();
-			}
+		// originally the file was written if no DataSupplier is avaliable
+		// this was removed because it prevented setting a header
 	}
 
 	private void createRowsFromDataSupplier(Iterable<List<Object>> dataSupplier) {

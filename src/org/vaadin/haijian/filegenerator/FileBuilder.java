@@ -27,6 +27,8 @@ public abstract class FileBuilder implements Serializable {
 	private Locale locale = Locale.getDefault();
     private String dateFormatString = "MM/dd/yyyy hh:mm";
 
+	protected boolean columnHeadersOnEveryPage;
+
     public FileBuilder() {
 
     }
@@ -205,5 +207,17 @@ public abstract class FileBuilder implements Serializable {
 	protected String formatDate(Date date){
 		SimpleDateFormat dateFormat = new SimpleDateFormat(dateFormatString, locale);
 		return dateFormat.format(date);
+	}
+
+	/**
+	 * Specifies wether colum headers should be displayed on every page or not. <br>
+	 * This option is not supported by every file type.
+	 * 
+	 * @param columnHeadersOnEveryPage
+	 *            If set to {@code true}, the column header will be displayed on every page.
+	 * @since 0.3
+	 */
+	public void setColumnHeadersOnEveryPage(boolean columnHeadersOnEveryPage) {
+		this.columnHeadersOnEveryPage = columnHeadersOnEveryPage;
 	}
 }
