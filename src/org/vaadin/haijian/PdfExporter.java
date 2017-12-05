@@ -78,14 +78,14 @@ public class PdfExporter extends Exporter {
 	}
 
 	/**
-	 * @since 0.3
+	 * @since 0.2
 	 */
 	public void setOrientationPortrait() {
 		((PdfFileBuilder) fileBuilder).setPortrait();
 	}
 
 	/**
-	 * @since 0.3
+	 * @since 0.2
 	 */
 	public void setOrientationLandscape() {
 		((PdfFileBuilder) fileBuilder).setLandscape();
@@ -96,7 +96,7 @@ public class PdfExporter extends Exporter {
 	 * 
 	 * @param columHeadersOnEveryPage
 	 *            If {@code true}, the headers of each column will be displayed on every page.
-	 * @since 0.3
+	 * @since 0.2
 	 */
 	public void setColumnHeadersOnEveryPage(boolean columHeadersOnEveryPage) {
 		((PdfFileBuilder) fileBuilder).setColumnHeadersOnEveryPage(columHeadersOnEveryPage);

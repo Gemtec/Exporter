@@ -215,7 +215,7 @@ public abstract class FileBuilder implements Serializable {
 	 * 
 	 * @param columnHeadersOnEveryPage
 	 *            If set to {@code true}, the column header will be displayed on every page.
-	 * @since 0.3
+	 * @since 0.2
 	 */
 	public void setColumnHeadersOnEveryPage(boolean columnHeadersOnEveryPage) {
 		this.columnHeadersOnEveryPage = columnHeadersOnEveryPage;
