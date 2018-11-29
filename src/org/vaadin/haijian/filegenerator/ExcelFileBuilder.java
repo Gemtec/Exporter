@@ -1,10 +1,10 @@
 package org.vaadin.haijian.filegenerator;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -41,6 +41,8 @@ public class ExcelFileBuilder extends FileBuilder {
 
 	private Map<Object, String> formaters;
 
+	private Iterable<List<Object>> dataSupplier;
+   
     public ExcelFileBuilder(Container container) {
         super(container);
     }
@@ -93,23 +95,50 @@ public class ExcelFileBuilder extends FileBuilder {
         return ".xls";
     }
 
-    @Override
-    protected void writeToFile() {
-        try {
-            workbook.write(new FileOutputStream(file));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+	@Override
+	protected void writeToFile() {
+		if (dataSupplier != null) {
+			createRowsFromDataSupplier(dataSupplier);
+		} else {
+			try {
+				workbook.write(new FileOutputStream(file));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
-    @Override
-    protected void onNewRow() {
-        row = sheet.createRow(rowNr);
-        rowNr++;
-        colNr = 0;
-    }
+	private void createRowsFromDataSupplier(Iterable<List<Object>> dataSupplier) {
+		for (List<Object> rowModels : dataSupplier) {
+			addRows(rowModels);
+		}
+	}
+
+	private void addRows(List<Object> modelObjects) {
+		for (Object itemId : modelObjects) {
+			addRowItem(itemId);
+		}
+
+		try {
+			workbook.write(new FileOutputStream(file));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void addRowItem(Object itemId) {
+		container.removeAllItems();
+		container.addItem(itemId);
+		onNewRow();
+		buildRow(itemId);
+	}
+
+	@Override
+	protected void onNewRow() {
+		row = sheet.createRow(rowNr);
+		rowNr++;
+		colNr = 0;
+	}
 
     @Override
     protected void onNewCell() {
@@ -233,5 +262,9 @@ public class ExcelFileBuilder extends FileBuilder {
 	public void setVisibleColumns(Object[] visibleColumns) {
 		super.setVisibleColumns(visibleColumns);
 		this.visibleColumns = visibleColumns;
+	}
+
+	public void setDataSupplier(Iterable<List<Object>> dataSupplier) {
+		this.dataSupplier = dataSupplier;
 	}
 }

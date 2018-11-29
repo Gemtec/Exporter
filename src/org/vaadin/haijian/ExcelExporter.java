@@ -1,6 +1,7 @@
 package org.vaadin.haijian;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.vaadin.haijian.filegenerator.ExcelFileBuilder;
@@ -41,6 +42,15 @@ public class ExcelExporter extends Exporter {
     protected FileBuilder createFileBuilder(Table table) {
         return new ExcelFileBuilder(table, converters, formatter);
     }
+
+	/**
+	 * Sets an {@link Iterable} that represents the content to be written in the xls file.
+	 * 
+	 * @since 0.3
+	 */
+	public void setDataSource(Iterable<List<Object>> dataSource) {
+		((ExcelFileBuilder) fileBuilder).setDataSupplier(dataSource);
+	}
 
     @Override
     protected String getDownloadFileName() {
