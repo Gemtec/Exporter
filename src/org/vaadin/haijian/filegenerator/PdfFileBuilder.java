@@ -36,12 +36,13 @@ public class PdfFileBuilder extends FileBuilder {
 	/** Stores relative width for columns as percentage */
 	private float[] relativeWidths;
 	/** Stores custom column alignments */
-	private int[] columnAlignemnts;
+	private int[] columnAlignments;
 
 	private boolean withBorder;
 	private int colNr;
 
 	private Iterable<List<Object>> dataSupplier;
+	private Integer headerAlignment;
 
 	public PdfFileBuilder(Container container) {
 		super(container);
@@ -74,14 +75,17 @@ public class PdfFileBuilder extends FileBuilder {
 	@Override
 	protected void buildColumnHeaders() {
 		super.buildColumnHeaders();
-		if (columnHeadersOnEveryPage) 
+		if (columnHeadersOnEveryPage)
 			table.setHeaderRows(1);
 	}
 
 	@Override
 	protected void buildColumnHeaderCell(String header) {
 		PdfPCell cell = new PdfPCell(new Phrase(header, subFont));
-		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		if (headerAlignment != null)
+			cell.setHorizontalAlignment(headerAlignment);
+		else
+			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 		cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
 		if (!withBorder) {
 			cell.setBorder(Rectangle.NO_BORDER);
@@ -96,8 +100,8 @@ public class PdfFileBuilder extends FileBuilder {
 		 * checks if an alignments for a specified column exists, defaults to left(0) if none was
 		 * found
 		 */
-		if (columnAlignemnts != null) {
-			horizontalAlignment = columnAlignemnts.length <= colNr - 1 ? 0 : columnAlignemnts[colNr - 1];
+		if (columnAlignments != null) {
+			horizontalAlignment = columnAlignments.length <= colNr - 1 ? 0 : columnAlignments[colNr - 1];
 		}
 
 		PdfPCell cell;
@@ -199,8 +203,19 @@ public class PdfFileBuilder extends FileBuilder {
 		orientation = PageSize.A4;
 	}
 
+	/**
+	 * Changes the alignment of the headers.
+	 * 
+	 * @param alignment
+	 *            see {@link Element} 0 - LEFT, 1 - CENTER, 2 - RIGHT
+	 * @since 0.4
+	 */
+	public void setHeaderAlignment(int headerAlignment) {
+		this.headerAlignment = headerAlignment;
+	}
+
 	public void setHorizonzalAlignments(int[] alignments) {
-		this.columnAlignemnts = alignments;
+		this.columnAlignments = alignments;
 	}
 
 	public void setRelativeWidths(float[] widths) {

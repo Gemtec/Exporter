@@ -27,7 +27,8 @@ public class PdfExporter extends Exporter {
 		super(table);
 	}
 
-    public PdfExporter(Container container, Object[] visibleColumns) {
+	public PdfExporter(	Container container,
+						Object[] visibleColumns) {
 		super(container, visibleColumns);
 	}
 
@@ -89,6 +90,17 @@ public class PdfExporter extends Exporter {
 	 */
 	public void setOrientationLandscape() {
 		((PdfFileBuilder) fileBuilder).setLandscape();
+	}
+
+	/**
+	 * Changes the alignment of the headers.
+	 * 
+	 * @param alignment
+	 *            see {@link Element} 0 - LEFT, 1 - CENTER, 2 - RIGHT
+	 * @since 0.4
+	 */
+	public void setHeaderAlignment(int headerAlignment) {
+		((PdfFileBuilder) fileBuilder).setHeaderAlignment(headerAlignment);
 	}
 
 	/**
